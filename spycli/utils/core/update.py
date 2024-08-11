@@ -5,7 +5,6 @@ import sys
 import json
 from packaging import version
 
-# Set the path to the version file in the same directory as this script
 version_file_path = os.path.join(os.path.dirname(__file__), 'version.json')
 
 def get_version():
