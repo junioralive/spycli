@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='spycli',
-    version='1.0.0',
+    version='1.0.1',
     author='junioralive',
     author_email='support@junioralive.in',
     description='A cli tool to browse and watch Movie/TV Shows/Anime/Kdrama/Cdráma/MORE',
@@ -16,7 +16,6 @@ setup(
         'pyfzf',
         'beautifulsoup4',
         'packaging',
-        'cryptography',
     ],
     entry_points={
         'console_scripts': [

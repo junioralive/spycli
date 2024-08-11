@@ -1,9 +1,5 @@
-from cryptography.fernet import Fernet
 import requests
 import base64
-
-key = b'3sOYMy7Ybm3oJHNk71R6W8iVg3NcRin0tm6I7KKYE9k='
-cipher = Fernet(key)
 
 def fetch_api_key():
     url = "https://api.github.com/repos/junioralive/spycli-api/contents/keys/apikey.txt"
@@ -19,14 +15,8 @@ def fetch_api_key():
         return None
 
 def fetch_api():
-    encrypted_url = fetch_api_key()
-    if encrypted_url is None:
+    api_url = fetch_api_key()
+    if api_url is None:
         return None
     
-    try:
-        decrypted_bytes = cipher.decrypt(encrypted_url.encode())
-        decrypted_url = decrypted_bytes.decode()
-        return decrypted_url
-    except Exception as e:
-        print(f"[!] Error during decryption: {e}")
-        return None
+    return api_url
