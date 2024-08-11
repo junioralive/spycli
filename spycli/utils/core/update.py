@@ -2,13 +2,21 @@ import os
 import requests
 import subprocess
 import sys
+import json
 from packaging import version
 
+# Set the path to the version file in the same directory as this script
+version_file_path = os.path.join(os.path.dirname(__file__), 'version.json')
 
-base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
-version_file_path = os.path.join(base_dir, 'spycli', '__version__.py')
+def get_version():
+    with open(version_file_path, 'r') as file:
+        data = json.load(file)
+        return data['version']
 
-from spycli.__version__ import __version__
+def set_version(new_version):
+    with open(version_file_path, 'w') as file:
+        json.dump({"version": new_version}, file, indent=4)
+        print("\r[✔] Version file updated.")
 
 def get_latest_release_info():
     try:
@@ -21,7 +29,7 @@ def get_latest_release_info():
         sys.exit(1)
 
 def check_for_updates():
-    current_version = __version__
+    current_version = get_version()
     release_info = get_latest_release_info()
     latest_version = release_info["tag_name"]
 
@@ -48,7 +56,7 @@ def update_package(url, file_name, new_version):
             f.write(response.content)
         print("\r[...] Installing the latest version...", end="", flush=True)
         subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", file_name])
-        update_version_file(new_version)
+        set_version(new_version)
         print("\r[✔] SPYCLI has been successfully updated to the latest version.")
         print("\r[!] Please restart the application to apply the updates.")
         sys.exit(0)
@@ -58,8 +66,3 @@ def update_package(url, file_name, new_version):
     except subprocess.CalledProcessError as e:
         print(f"\r[!] Error during installation: {e}")
         sys.exit(1)
-
-def update_version_file(new_version):
-    with open(version_file_path, 'w') as version_file:
-        version_file.write(f'__version__ = "{new_version}"\n')
-        print("\r[✔] Version file updated.")
