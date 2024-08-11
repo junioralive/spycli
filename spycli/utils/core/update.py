@@ -21,26 +21,27 @@ def check_for_updates():
 
     if version.parse(current_version) < version.parse(latest_version):
         print(f"\r[+] Update available: v{current_version} -> v{latest_version}")
-        download_url = None
+        download_url, file_name = None, None
         for asset in release_info["assets"]:
             if asset["name"].endswith(".whl"):
                 download_url = asset["browser_download_url"]
+                file_name = asset["name"]
                 break
-        if download_url:
+        if download_url and file_name:
             print("\r[...] Downloading the latest version...", end="", flush=True)
-            update_package(download_url)
+            update_package(download_url, file_name)
         else:
             print("\r[!] No suitable update file found. Please check the release assets manually.")
     else:
         print("\r[✔] You are already using the latest version of SPYCLI.")
 
-def update_package(url):
+def update_package(url, file_name):
     try:
         response = requests.get(url)
-        with open("latest_package.whl", "wb") as f:
+        with open(file_name, "wb") as f:
             f.write(response.content)
         print("\r[...] Installing the latest version...", end="", flush=True)
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "latest_package.whl"])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", file_name])
         print("\r[✔] SPYCLI has been successfully updated to the latest version.")
         print("\r[!] Please restart the application to apply the updates.")
         sys.exit(0)
@@ -50,4 +51,3 @@ def update_package(url):
     except subprocess.CalledProcessError as e:
         print(f"\r[!] Error during installation: {e}")
         sys.exit(1)
-
